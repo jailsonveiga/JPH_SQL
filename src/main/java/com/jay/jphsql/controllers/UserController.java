@@ -5,11 +5,14 @@ import com.jay.jphsql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -52,6 +55,27 @@ public class UserController {
             System.out.println(e.getMessage());
 
             return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    // grab all the users and store inside our local MySQL database
+    @PostMapping("/all")
+    public ResponseEntity<?> uploadAllUsersToSQL (RestTemplate restTemplate) {
+
+        try {
+            UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
+
+            assert allUsers != null;
+            List<UserModel> savedUsers = userRepository.saveAll(Arrays.asList(allUsers));
+
+            return ResponseEntity.ok(savedUsers);
+        } catch (Exception e){
+
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
+
         }
     }
 
