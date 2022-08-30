@@ -58,7 +58,7 @@ public class UserController {
         }
     }
 
-    // grab all the users and store inside our local MySQL database
+    // grab all the users from JPH and store inside our local MySQL database
     @PostMapping("/all")
     public ResponseEntity<?> uploadAllUsersToSQL (RestTemplate restTemplate) {
 
