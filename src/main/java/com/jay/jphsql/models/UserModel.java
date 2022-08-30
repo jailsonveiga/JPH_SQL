@@ -1,8 +1,6 @@
 package com.jay.jphsql.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "User")
@@ -10,6 +8,7 @@ public class UserModel {
 
     @Id
     private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
 
     private String name;
     private String username;
