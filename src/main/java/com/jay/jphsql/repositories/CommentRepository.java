@@ -1,4 +1,4 @@
 package com.jay.jphsql.repositories;
 
-public class CommentRepository {
+public interface CommentRepository {
 }
