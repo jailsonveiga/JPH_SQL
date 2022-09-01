@@ -68,4 +68,31 @@ public class CommentController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    @GetMapping ("/findBodyMax")
+    public ResponseEntity<?> findBodyMax (RestTemplate restTemplate) {
+        try {
+
+            // retrieve data from JPH API and save to array of comments
+            CommentModel[] allComments = restTemplate.getForObject(JPH_API_URL, CommentModel[].class);
+
+            // check that allComments is present, otherwise an exception will be thrown
+            assert allComments != null;
+
+            int maxLen = 0;
+
+            for(CommentModel comment : allComments) {
+                if (comment.getBody().length() > maxLen) maxLen = comment.getBody().length();
+            }
+
+            // respond with the data that was just saved to the database
+            return ResponseEntity.ok("Max Length Body: " + maxLen);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }
