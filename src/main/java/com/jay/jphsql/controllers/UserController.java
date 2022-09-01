@@ -4,10 +4,7 @@ import com.jay.jphsql.models.UserModel;
 import com.jay.jphsql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final String JPH_API_URL = "https://jsonplaceholder.typicode.com/users";
@@ -59,11 +57,16 @@ public class UserController {
     }
 
     // grab all the users from JPH and store inside our local MySQL database
-    @PostMapping("/all")
+    @PostMapping("/sql/all")
     public ResponseEntity<?> uploadAllUsersToSQL (RestTemplate restTemplate) {
 
         try {
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
+
+            for (UserModel user : allUsers
+                 ) {
+                user.removeId();
+            }
 
             assert allUsers != null;
             List<UserModel> savedUsers = userRepository.saveAll(Arrays.asList(allUsers));
@@ -76,6 +79,25 @@ public class UserController {
 
             return ResponseEntity.internalServerError().body(e.getMessage());
 
+        }
+    }
+
+    // Create User
+    @PostMapping
+    public ResponseEntity<?> uploadOneUser (@RequestBody UserModel newUserData) {
+        try {
+
+            newUserData.removeId();
+
+            UserModel savedUser = userRepository.save(newUserData);
+
+            return ResponseEntity.ok(savedUser);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
