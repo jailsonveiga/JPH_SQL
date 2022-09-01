@@ -72,6 +72,24 @@ public class UserController {
         }
     }
 
+    // Delete all users from SQL must make sure a user with the given id already exist
+    @DeleteMapping("/sql/all")
+    public ResponseEntity<?> deleteAllUsersSQL () {
+        try {
+
+            long count = userRepository.count();
+            userRepository.deleteAll();
+
+            return ResponseEntity.ok("Deleted Users: " + count);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     // Get one user by ID from SQL
     @GetMapping ("/sql/{id}")
     public ResponseEntity<?> getOneUserById (@PathVariable String id) {
