@@ -61,8 +61,10 @@ public class UserController {
     public ResponseEntity<?> uploadAllUsersToSQL (RestTemplate restTemplate) {
 
         try {
+            // retrieve data from JPH API and save to array of UserModels
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
 
+            // check that allUsers is present, otherwise an exception will be throw
             assert allUsers != null;
 
             // remove id from each user
@@ -74,6 +76,7 @@ public class UserController {
             // saves users to database and updates each User's id field to the saved database ID
             userRepository.saveAll(Arrays.asList(allUsers));
 
+            // repond with the data that was just saved to the database
             return ResponseEntity.ok(allUsers);
 
         } catch (Exception e){
