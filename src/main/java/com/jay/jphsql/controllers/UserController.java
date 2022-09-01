@@ -63,15 +63,19 @@ public class UserController {
         try {
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
 
-            for (UserModel user : allUsers
+            assert allUsers != null;
+
+            // remove id from each user
+            for (UserModel allUser : allUsers
                  ) {
-                user.removeId();
+                allUser.removeId();
             }
 
-            assert allUsers != null;
-            List<UserModel> savedUsers = userRepository.saveAll(Arrays.asList(allUsers));
+            // saves users to database and updates each User's id field to the saved database ID
+            userRepository.saveAll(Arrays.asList(allUsers));
 
-            return ResponseEntity.ok(savedUsers);
+            return ResponseEntity.ok(allUsers);
+
         } catch (Exception e){
 
             System.out.println(e.getClass());
