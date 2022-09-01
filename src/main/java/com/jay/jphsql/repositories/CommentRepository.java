@@ -1,4 +1,7 @@
 package com.jay.jphsql.repositories;
 
-public interface CommentRepository {
+import com.jay.jphsql.models.CommentModel;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CommentRepository extends JpaRepository <CommentModel, Integer> {
 }
