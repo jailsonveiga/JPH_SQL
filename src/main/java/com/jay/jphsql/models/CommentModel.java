@@ -16,7 +16,7 @@ public class CommentModel {
     private String name;
     private String email;
 
-    @Column(length = 1000)
+    @Column(length = 300)
     private String body;
 
     public int getId() {
