@@ -15,10 +15,16 @@ public class CommentModel {
 
     private String name;
     private String email;
+
+    @Column(length = 1000)
     private String body;
 
     public int getId() {
         return id;
+    }
+
+    public void removeId () {
+        id = 0;
     }
 
     public int getPostId() {
