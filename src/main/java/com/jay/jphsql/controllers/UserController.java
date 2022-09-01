@@ -3,13 +3,16 @@ package com.jay.jphsql.controllers;
 import com.jay.jphsql.models.UserModel;
 import com.jay.jphsql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,6 +33,34 @@ public class UserController {
             UserModel[] allUsers = restTemplate.getForObject(JPH_API_URL, UserModel[].class);
 
             return ResponseEntity.ok(allUsers);
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    // Get one user by ID from SQL
+    @GetMapping ("/sql/{id}")
+    public ResponseEntity<?> getOneUserById (@PathVariable String id) {
+        try {
+            // throws NumberFormatException if id is not an int
+            int userId = Integer.parseInt(id);
+
+            System.out.println("Getting User With ID: " + id);
+
+            // GET data from SQL (using repo)
+            Optional<UserModel> foundUser = userRepository.findById(userId);
+
+            if (foundUser.isEmpty())   return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+
+            return ResponseEntity.ok(foundUser.get());
+
+        } catch (NumberFormatException e) {
+
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
 
         } catch (Exception e) {
             System.out.println(e.getClass());
@@ -76,7 +107,7 @@ public class UserController {
             // saves users to database and updates each User's id field to the saved database ID
             userRepository.saveAll(Arrays.asList(allUsers));
 
-            // repond with the data that was just saved to the database
+            // respond with the data that was just saved to the database
             return ResponseEntity.ok(allUsers);
 
         } catch (Exception e){
