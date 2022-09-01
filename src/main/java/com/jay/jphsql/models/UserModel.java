@@ -3,12 +3,12 @@ package com.jay.jphsql.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class UserModel {
 
     @Id
-    private int id;
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     private String name;
     private String username;
@@ -18,6 +18,10 @@ public class UserModel {
 
     public int getId() {
         return id;
+    }
+
+    public void removeId() {
+        id = 0;
     }
 
     public String getName() {
