@@ -42,6 +42,36 @@ public class UserController {
         }
     }
 
+    // Delete one user by ID from SQL must make sure a user with the given id already exist
+    @DeleteMapping ("/sql/{id}")
+    public ResponseEntity<?> deleteOneUserById (@PathVariable String id) {
+        try {
+            // throws NumberFormatException if id is not an int
+            int userId = Integer.parseInt(id);
+
+            System.out.println("Getting User With ID: " + id);
+
+            // GET data from SQL (using repo)
+            Optional<UserModel> foundUser = userRepository.findById(userId);
+
+            if (foundUser.isEmpty())   return ResponseEntity.status(404).body("User Not Found With ID: " + id);
+
+            userRepository.deleteById(userId);
+
+            return ResponseEntity.ok(foundUser.get());
+
+        } catch (NumberFormatException e) {
+
+            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
+
+        } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     // Get one user by ID from SQL
     @GetMapping ("/sql/{id}")
     public ResponseEntity<?> getOneUserById (@PathVariable String id) {
