@@ -187,38 +187,4 @@ public class UserController {
         }
     }
 
-    // PUT one user by ID (SQL) - must make sure a user with the given id already exist
-    @PutMapping("/sql/{id}")
-    public ResponseEntity<?> updateOneUser (@PathVariable String id, @RequestBody UserModel updatedUserData) {
-        try {
-
-            // GET data from SQL (using repo)
-            Optional<UserModel> foundUser = findUser(id);
-
-            System.out.println("Getting User With ID: " + id);
-
-
-            if (foundUser.isEmpty()) return ResponseEntity.status(404).body("User Not Found With ID: " + id);
-            if (foundUser.get().getId() != updatedUserData.getId()) return ResponseEntity.status(400).body("User IDs did not match");
-
-                userRepository.save(updatedUserData);
-                return ResponseEntity.ok(updatedUserData);
-
-        } catch (NumberFormatException e) {
-
-            return ResponseEntity.status(400).body("ID: " + id + ", is not a valid id. Must be a whole number");
-
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.getMessage());
-
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-    }
-
-    public Optional<UserModel> findUser (String id) throws NumberFormatException {
-        int userId = Integer.parseInt(id);
-
-        return userRepository.findById(userId);
-    }
 }
